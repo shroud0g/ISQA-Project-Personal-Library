@@ -6,7 +6,7 @@ $( document ).ready(function() {
     //var items = [];
     itemsRaw = data;
     $.each(data, function(i, val) {
-      items.push('<li class="bookItem" id="' + i + '">' + val.title + ' - ' + val.commentcount + ' comments</li>');
+      items.push('<li class="bookItem" id="' + i + '">' + val.title + ' - ' + val.commentCount + ' comments</li>');
       return ( i !== 14 );
     });
     if (items.length >= 15) {
@@ -24,7 +24,8 @@ $( document ).ready(function() {
     $.getJSON('/api/books/'+itemsRaw[this.id]._id, function(data) {
       comments = [];
       $.each(data.comments, function(i, val) {
-        comments.push('<li>' +val+ '</li>');
+
+        comments.push('<li>' +val.comment+ '</li>');
       });
       comments.push('<br><form id="newCommentForm"><input style="width:300px" type="text" class="form-control" id="commentToAdd" name="comment" placeholder="New Comment"></form>');
       comments.push('<br><button class="btn btn-info addComment" id="'+ data._id+'">Add Comment</button>');
@@ -52,7 +53,15 @@ $( document ).ready(function() {
       dataType: 'json',
       data: $('#newCommentForm').serialize(),
       success: function(data) {
-        comments.unshift(newComment); //adds new comment to top of list
+        $('#detailComments').html('');
+        var comments = [];
+        $.each(data.comments, function(i, val) {
+
+        comments.push('<li>' +val.comment+ '</li>');
+      });
+        comments.push('<br><form id="newCommentForm"><input style="width:300px" type="text" class="form-control" id="commentToAdd" name="comment" placeholder="New Comment"></form>');
+        comments.push('<br><button class="btn btn-info addComment" id="'+ data._id+'">Add Comment</button>');
+        comments.push('<button class="btn btn-danger deleteBook" id="'+ data._id+'">Delete Book</button>');
         $('#detailComments').html(comments.join(''));
       }
     });
